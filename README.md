@@ -1,9 +1,9 @@
-# Promptwright - Synthetic Dataset Generation Library
+# Promptwright - Synthetic Dataset Generation Library (Persian Version)
 
 [![Tests](https://github.com/StacklokLabs/promptwright/actions/workflows/test.yml/badge.svg)](https://github.com/StacklokLabs/promptwright/actions/workflows/test.yml)
 [![Python Version](https://img.shields.io/pypi/pyversions/promptwright.svg)](https://pypi.org/project/promptwright/)
 
-![promptwright-cover](https://github.com/user-attachments/assets/0bace08b-753c-42d3-a084-5a1953101fa2)
+![promptwright-cover](assets/image.png)
 
 
 Promptwright is a Python library from [Stacklok](https://stacklok.com) designed 
@@ -56,8 +56,8 @@ To install the prerequisites, you can use the following commands:
 curl -sSL https://install.python-poetry.org | python3 -
 
 # Install promptwright and its dependencies
-git clone https://github.com/StacklokLabs/promptwright.git
-cd promptwright
+git clone https://github.com/ParsBench/persian-promptwright.git
+cd persian-promptwright
 poetry install
 ```
 

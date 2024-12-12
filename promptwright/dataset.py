@@ -143,10 +143,12 @@ class Dataset:
         Args:
             save_path: Path where the JSONL file should be saved.
         """
-        with open(save_path, "w") as f:
+        with open(save_path, "w", encoding="utf-8") as f:
             for sample in self.samples:
                 # Clean up the JSON string before writing
-                clean_json = self.remove_linebreaks_and_spaces(json.dumps(sample))
+                clean_json = self.remove_linebreaks_and_spaces(
+                    json.dumps(sample, ensure_ascii=False)
+                )
                 f.write(clean_json + "\n")
 
         print(f"Saved dataset to {save_path}")

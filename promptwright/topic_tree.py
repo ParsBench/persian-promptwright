@@ -246,7 +246,7 @@ class TopicTree:
         for subnode in subnodes:
             try:
                 if isinstance(subnode, dict | list):
-                    cleaned_subnodes.append(json.dumps(subnode))
+                    cleaned_subnodes.append(json.dumps(subnode, ensure_ascii=False))
                 else:
                     cleaned_subnodes.append(str(subnode))
             except Exception as e:
@@ -275,16 +275,16 @@ class TopicTree:
     def save(self, save_path: str) -> None:
         """Save the topic tree to a file."""
         try:
-            with open(save_path, "w") as f:
+            with open(save_path, "w", encoding="utf-8") as f:
                 for path in self.tree_paths:
-                    f.write(json.dumps({"path": path}) + "\n")
+                    f.write(json.dumps({"path": path}, ensure_ascii=False) + "\n")
 
             # Save failed generations if any
             if self.failed_generations:
                 failed_path = save_path.replace(".jsonl", "_failed.jsonl")
-                with open(failed_path, "w") as f:
+                with open(failed_path, "w", encoding="utf-8") as f:
                     for failure in self.failed_generations:
-                        f.write(json.dumps(failure) + "\n")
+                        f.write(json.dumps(failure, ensure_ascii=False) + "\n")
                 print(f"Failed generations saved to {failed_path}")
 
             print(f"Topic tree saved to {save_path}")

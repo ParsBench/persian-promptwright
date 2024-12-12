@@ -1,121 +1,122 @@
-SAMPLE_GENERATION_PROMPT = """I want to train a large language model and you should help me generate training data for it. Here is the system prompt of the model that tells it what it should be able to do:
+SAMPLE_GENERATION_PROMPT = """من می‌خواهم یک مدل زبانی بزرگ را آموزش دهم و شما باید به من در تولید داده‌های آموزشی کمک کنید. در اینجا پیام سیستمی مدل آمده است که به آن می‌گوید چه کاری باید انجام دهد:
 
 <system_prompt>
 {{{{system_prompt}}}}
 </system_prompt>
 
-You should now generate three training samples for the model. Each training sample should consist of a JSON object with the field "messages", which is a list of messages alternating between user and assistant roles. The first message must always be from the user, and the last one from the assistant. Depending on the use case of the system prompt, there may be multiple user and assistant messages. The format for each training sample must strictly follow this format:
+شما اکنون باید سه نمونه آموزشی برای مدل تولید کنید. هر نمونه آموزشی باید شامل یک شیء JSON با فیلد "messages" باشد که فهرستی از پیام‌ها با نقش‌های کاربر و دستیار به صورت متناوب است. پیام اول همیشه باید از طرف کاربر و آخرین پیام از طرف دستیار باشد. بسته به مورد استفاده از پیام سیستم، ممکن است چندین پیام کاربر و دستیار وجود داشته باشد. قالب هر نمونه آموزشی باید دقیقاً از این فرمت پیروی کند:
 
 {
     "messages": [
         {
-            "role": "user",
-            "content": "<user_content>"
+            "role": "user", 
+            "content": "<محتوای_کاربر>"
         },
         {
             "role": "assistant",
-            "content": "<assistant_content>"
+            "content": "<محتوای_دستیار>"
         }
     ]
 }
 
-It is crucial that you respond only with valid JSON. Do not include any introductions, explanations, summaries, or additional text that is not part of the JSON object. Any non-JSON content will be considered incorrect. If you encounter issues generating valid JSON, please retry or provide a default response.
+بسیار مهم است که شما فقط با JSON معتبر پاسخ دهید. هیچ مقدمه، توضیح، خلاصه یا متن اضافی که بخشی از شیء JSON نیست را شامل نکنید. هر محتوای غیر JSON نادرست در نظر گرفته می‌شود. اگر در تولید JSON معتبر با مشکل مواجه شدید، لطفاً دوباره تلاش کنید یا یک پاسخ پیش‌فرض ارائه دهید.
 
-Here are additional inputs to guide you:
+لطفاً نمونه‌ها را به زبان فارسی و در بافت فرهنگی ایران تولید کنید.
+
+در اینجا ورودی‌های اضافی برای راهنمایی شما آمده است:
 
 {{{{instructions}}}}
 {{{{examples}}}}
 {{{{subtopics}}}}
 
-Now, generate a single training sample in the JSON format specified above. Respond only with valid JSON."""
+اکنون، یک نمونه آموزشی در قالب JSON مشخص شده تولید کنید. فقط با JSON معتبر پاسخ دهید."""
 
-TREE_GENERATION_PROMPT = """I want to train a large language model and I am using another, bigger large language model to generate training data for this. However, if we always ask the bigger model to generate training data with the same prompt, it will end up generating very repetitive training samples. Therefore, we will slightly modify our prompt for each sampling procedure according to some aspects. For instance, when asking the model to generate news articles, we could modify the prompt to let the model tell news articles about particular topics, such as business or politics. To further generate training data, we will do this recursively, and generate submodifications to the prompt. For instance, within the domain of business, we could adapt the prompt to generate news about the stock market or business scandals, and within politics, we could ask the model to generate articles for subtopics like elections or climate policy. We do this recursively, and therefore, we get a tree-like structure of topics.
-Your job is the following: I will give you a path of nodes down the topic tree - you should then come up with a list of new subtopics for this given node and return it as a python list. Here are a few examples of what your outputs should look like, related to the news example I just gave you:
+TREE_GENERATION_PROMPT = """من می‌خواهم یک مدل زبانی بزرگ را آموزش دهم و از یک مدل زبانی بزرگتر برای تولید داده‌های آموزشی استفاده می‌کنم. با این حال، اگر همیشه از مدل بزرگتر بخواهیم که با یک پیام یکسان داده‌های آموزشی تولید کند، در نهایت نمونه‌های تکراری تولید خواهد کرد. بنابراین، ما پیام خود را برای هر فرآیند نمونه‌گیری بر اساس جنبه‌های مختلف کمی تغییر می‌دهیم. به عنوان مثال، هنگام درخواست از مدل برای تولید مقالات خبری، می‌توانیم پیام را طوری تغییر دهیم که مدل اخبار مربوط به موضوعات خاص مانند تجارت یا سیاست را بیان کند. برای تولید بیشتر داده‌های آموزشی، این کار را به صورت بازگشتی انجام می‌دهیم و تغییرات فرعی در پیام ایجاد می‌کنیم. به عنوان مثال، در حوزه تجارت، می‌توانیم پیام را برای تولید اخبار مربوط به بازار سهام یا رسوایی‌های تجاری تنظیم کنیم، و در سیاست، می‌توانیم از مدل بخواهیم مقالاتی برای موضوعات فرعی مانند انتخابات یا سیاست‌های اقلیمی تولید کند. ما این کار را به صورت بازگشتی انجام می‌دهیم و بنابراین، یک ساختار درختی از موضوعات به دست می‌آوریم.
 
-Example 1:
-node path: "News Topics" -> "Sports" -> "Football"
-desired number of subtopics: 5
-subtopics: ["college football", "football stadiums", "health consequences football", "Seattle Seahawks", "football sponsorships"]
+وظیفه شما به این شرح است: من یک مسیر از گره‌ها در درخت موضوعات به شما می‌دهم - شما باید فهرستی از موضوعات فرعی جدید برای این گره ارائه دهید و آن را به صورت یک لیست پایتون برگردانید. در اینجا چند مثال از خروجی‌های مورد نظر آمده است که مربوط به مثال خبری است که قبلاً ذکر کردم:
 
+مثال ۱:
+مسیر گره: "موضوعات خبری" -> "ورزش" -> "فوتبال"
+تعداد موضوعات فرعی مورد نیاز: ۵
+موضوعات فرعی: ["فوتبال دانشگاهی", "ورزشگاه‌های فوتبال", "پیامدهای سلامتی فوتبال", "تیم سیاتل سیهاکس", "اسپانسرهای فوتبال"]
 
-Example 2:
-node path: "News Topics" -> "Entertainment" -> "Movies" -> "Star Portraits"
-desired number of subtopics: 8
-subtopics: ["Tom Hanks", "Meryl Streep", "Leonardo DiCaprio", "Jennifer Lawrence", "Denzel Washington", "Charlize Theron", "Robert Downey Jr.", "Emma Stone"]
+مثال ۲:
+مسیر گره: "موضوعات خبری" -> "سرگرمی" -> "فیلم‌ها" -> "چهره‌های ستاره‌ها"
+تعداد موضوعات فرعی مورد نیاز: ۸
+موضوعات فرعی: ["تام هنکس", "مریل استریپ", "لئوناردو دی‌کاپریو", "جنیفر لارنس", "دنزل واشنگتن", "شارلیز ترون", "رابرت داونی جونیور", "اما استون"]
 
+در اینجا سه مثال دیگر برای تولید موضوعات گفتگوی دوستانه برای یک دستیار گفتگو آمده است:
 
-Here are three new examples, this time for generating smalltalk topics for a friendly chat assistant:
+مثال ۱:
+مسیر گره: "موضوعات گفتگوی دوستانه"
+تعداد موضوعات فرعی مورد نیاز: ۷
+موضوعات فرعی: ["آب و هوا", "برنامه‌های آخر هفته", "سرگرمی‌ها", "خانواده", "کتاب‌ها", "غذا", "موسیقی"]
 
-Example 1:
-node path: "Small Talk Topics"
-desired number of subtopics: 7
-subtopics: ["weather", "weekend plans", "hobbies", "family", "books", "food", "music"]
+مثال ۲:
+مسیر گره: "موضوعات گفتگوی دوستانه" -> "خانواده"
+تعداد موضوعات فرعی مورد نیاز: ۵
+موضوعات فرعی: ["والدین", "پدربزرگ و مادربزرگ", "خواهر و برادر", "سنت‌های خانوادگی", "تعطیلات خانوادگی"]
 
-Example 2:
-node path: "Small Talk Topics" -> "Family"
-desired number of subtopics: 5
-subtopics: ["parents", "grandparents", "siblings", "family traditions", "family vacations"]
+مثال ۳:
+مسیر گره: "موضوعات گفتگوی دوستانه" -> "سرگرمی‌ها" -> "آشپزی"
+تعداد موضوعات فرعی مورد نیاز: ۶
+موضوعات فرعی: ["دستور پخت‌ها", "غذاهای آسیایی", "غذاهای مورد علاقه", "کتاب‌های آشپزی", "وسایل آشپزخانه", "آشپزی گیاهی"]
 
-Example 3:
-node path: "Small Talk Topics" -> "Hobbies" -> "Cooking"
-desired number of subtopics: 6
-subtopics: ["recipes", "asian food", "favourite dishes", "cookbooks", "kitchen gadgets", "vegan cooking"]
-
-
-Here is a description / the system prompt for the model we want to train:
+در اینجا توضیح / پیام سیستمی برای مدلی که می‌خواهیم آموزش دهیم آمده است:
 
 <system_prompt>
 {{{{system_prompt}}}}
 </system_prompt>
 
+این ورودی موضوع شماست. هنگام تولید موضوعات فرعی، تا حدی مبهم بمانید. موضوعات می‌توانند فقط ارتباط غیرمستقیم داشته باشند و نیازی نیست به یک روش خاص تفسیر شوند. مهمتر از همه، اطمینان حاصل کنید که موضوعات فرعی با پیام سیستم، اگر ارائه شده باشد، مطابقت دارند:
+مسیر گره: {{{{subtopics_list}}}}
+تعداد موضوعات فرعی مورد نیاز: {{{{num_subtopics}}}}
 
-Here is your topic input. When generating subtopics, remain somewhat vague. Things can only be tangentially related and they don't have to be interpreted in a single way. Importantly, make sure that the subtopics fit the system prompt, if one was supplied:
-node path: {{{{subtopics_list}}}}
-desired number of subtopics: {{{{num_subtopics}}}}
+لطفاً موضوعات فرعی را به زبان فارسی و در بافت فرهنگی ایران تولید کنید.
 
-Now return the subtopics as a python list, and return it in just one line, not multiple ones. Don't return anything else."""
+اکنون موضوعات فرعی را به صورت یک لیست پایتون برگردانید، و آن را فقط در یک خط برگردانید، نه در چند خط. چیز دیگری برنگردانید."""
 
-TREE_JSON_INSTRUCTIONS = """When listing subtopics, format your response as a valid JSON array of strings.
-Example: ["topic 1", "topic 2", "topic 3"]
-1. Use double quotes for strings
-2. Use square brackets for the array
-3. Separate items with commas
-4. Do not include any text before or after the JSON array
-5. Ensure all JSON syntax is valid
+TREE_JSON_INSTRUCTIONS = """هنگام فهرست کردن موضوعات فرعی، پاسخ خود را به صورت یک آرایه JSON از رشته‌ها قالب‌بندی کنید.
+مثال: ["موضوع ۱", "موضوع ۲", "موضوع ۳"]
+۱. از نقل قول دوتایی برای رشته‌ها استفاده کنید
+۲. از کروشه برای آرایه استفاده کنید
+۳. موارد را با کاما از هم جدا کنید
+۴. هیچ متنی قبل یا بعد از آرایه JSON قرار ندهید
+۵. اطمینان حاصل کنید که نحو JSON معتبر است
 """
 
-OLD_ENGINE_JSON_INSTRUCTIONS = """Your response **must be valid JSON** that can be parsed by `json.loads()`. Follow these rules precisely:
+OLD_ENGINE_JSON_INSTRUCTIONS = """پاسخ شما **باید JSON معتبر** باشد که توسط `json.loads()` قابل تجزیه باشد. لطفاً این قوانین را دقیقاً رعایت کنید:
 
-1. **Double Quotes Only**: Use double quotes (`"`) around all string values, including keys.
-2. **No Extra Text**: Do not include any text before or after the JSON block. Ensure the output is **only JSON**.
-3. **Valid Syntax**: Check that all JSON syntax is correct:
-   - Every key-value pair should be separated by a colon.
-   - Separate each item in an array or object with a comma, except for the last item.
-4. **No Trailing Commas**: Ensure there are no trailing commas in arrays or objects.
-5. **Number Formatting**: Ensure numbers are formatted correctly (e.g., no leading zeroes unless the number is decimal).
-6. **Boolean & Null Values**: Use lowercase `true`, `false`, and `null` as valid JSON values.
-7. **Final Validation**: Your response will be parsed as JSON. Any syntax errors will cause a failure, so check carefully.
+۱. **فقط نقل قول دوتایی**: از نقل قول دوتایی (`"`) برای تمام مقادیر رشته‌ای، از جمله کلیدها استفاده کنید.
+۲. **بدون متن اضافی**: هیچ متنی قبل یا بعد از بلوک JSON قرار ندهید. اطمینان حاصل کنید که خروجی **فقط JSON** است.
+۳. **نحو معتبر**: بررسی کنید که تمام نحو JSON صحیح است:
+   - هر جفت کلید-مقدار باید با دو نقطه جدا شود.
+   - هر مورد در آرایه یا شیء را با کاما جدا کنید، به جز آخرین مورد.
+۴. **بدون کامای اضافی**: اطمینان حاصل کنید که هیچ کامای اضافی در آرایه‌ها یا اشیاء وجود ندارد.
+۵. **قالب‌بندی اعداد**: اطمینان حاصل کنید که اعداد به درستی قالب‌بندی شده‌اند (مثلاً بدون صفر پیشرو مگر اینکه عدد اعشاری باشد).
+۶. **مقادیر بولی و تهی**: از `true`، `false` و `null` با حروف کوچک به عنوان مقادیر معتبر JSON استفاده کنید.
+۷. **اعتبارسنجی نهایی**: پاسخ شما به عنوان JSON تجزیه خواهد شد. هرگونه خطای نحوی باعث شکست می‌شود، پس با دقت بررسی کنید.
 
-**Important**: The entire response must be **valid JSON**, with no explanations, comments, or text outside of the JSON structure.
+**مهم**: کل پاسخ باید **JSON معتبر** باشد، بدون توضیحات، نظرات یا متن خارج از ساختار JSON.
 """
 
-ENGINE_JSON_INSTRUCTIONS = """You are an expert JSON builder designed to assist with a wide range of tasks.
+ENGINE_JSON_INSTRUCTIONS = """شما یک سازنده JSON متخصص هستید که برای کمک به طیف گسترده‌ای از وظایف طراحی شده‌اید.
 
-Your response **must be valid JSON** that can be parsed by `json.loads()`. Follow these rules precisely:
+پاسخ شما **باید JSON معتبر** باشد که توسط `json.loads()` قابل تجزیه باشد. این قوانین را دقیقاً دنبال کنید:
 
-1. **Double Quotes Only**: Use double quotes (`"`) around all string values, including keys.
-2. **No Extra Text**: Do not include any text before or after the JSON block. Ensure the output is **only JSON**.
-3. **Valid Syntax**: Check that all JSON syntax is correct:
-   - Every key-value pair should be separated by a colon.
-   - Separate each item in an array or object with a comma, except for the last item.
-4. **No Trailing Commas**: Ensure there are no trailing commas in arrays or objects.
-5. **Number Formatting**: Ensure numbers are formatted correctly (e.g., no leading zeroes unless the number is decimal).
-6. **Boolean & Null Values**: Use lowercase `true`, `false`, and `null` as valid JSON values.
-7. **Final Validation**: Your response will be parsed as JSON. Any syntax errors will cause a failure, so check carefully.
+1. **فقط نقل قول دوتایی**: از نقل قول دوتایی (`"`) برای تمام مقادیر رشته‌ای، از جمله کلیدها استفاده کنید.
+2. **بدون متن اضافی**: هیچ متنی قبل یا بعد از بلوک JSON قرار ندهید. اطمینان حاصل کنید که خروجی **فقط JSON** است.
+3. **نحو معتبر**: بررسی کنید که تمام نحو JSON صحیح است:
+   - هر جفت کلید-مقدار باید با دو نقطه جدا شود.
+   - هر مورد در آرایه یا شیء را با کاما جدا کنید، به جز آخرین مورد.
+4. **بدون کامای اضافی**: اطمینان حاصل کنید که هیچ کامای اضافی در آرایه‌ها یا اشیاء وجود ندارد.
+5. **قالب‌بندی اعداد**: اطمینان حاصل کنید که اعداد به درستی قالب‌بندی شده‌اند (مثلاً بدون صفر پیشرو مگر اینکه عدد اعشاری باشد).
+6. **مقادیر بولی و تهی**: از `true`، `false` و `null` با حروف کوچک به عنوان مقادیر معتبر JSON استفاده کنید.
+7. **اعتبارسنجی نهایی**: پاسخ شما به عنوان JSON تجزیه خواهد شد. هرگونه خطای نحوی باعث شکست می‌شود، پس با دقت بررسی کنید.
 
-**Important**: The entire response must be **valid JSON**, with no explanations, comments, or text outside of the JSON structure.
+**مهم**: کل پاسخ باید **JSON معتبر** باشد، بدون توضیحات، نظرات یا متن خارج از ساختار JSON.
 
-**JSON Structure**:
+**ساختار JSON**:
 ```json
 {
   "messages": [
@@ -131,7 +132,7 @@ Your response **must be valid JSON** that can be parsed by `json.loads()`. Follo
 }
 ```
 
-**JSON Examples**:
+**مثال‌های JSON**:
 ```json
 {
   "messages": [
@@ -159,5 +160,5 @@ Your response **must be valid JSON** that can be parsed by `json.loads()`. Follo
 }
 ```
 
-All of Assistant's communication is performed using this JSON format.
+همه گفتگوهای دستیار با استفاده از این فرمت JSON انجام می‌شود.
 """
