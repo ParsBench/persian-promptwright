@@ -1,5 +1,7 @@
 # Promptwright - Synthetic Dataset Generation Library (Persian Version)
 
+This repository is a fork of [PromptWright](https://github.com/StacklokLabs/promptwright) that has been specialized and localized for the Persian language, enabling synthetic dataset generation with Persian content and cultural context.
+
 [![Tests](https://github.com/StacklokLabs/promptwright/actions/workflows/test.yml/badge.svg)](https://github.com/StacklokLabs/promptwright/actions/workflows/test.yml)
 [![Python Version](https://img.shields.io/pypi/pyversions/promptwright.svg)](https://pypi.org/project/promptwright/)
 
@@ -44,7 +46,7 @@ locally with say something like Ollama, or call directly to an online LLM provid
 You can install Promptwright using pip:
 
 ```bash
-pip install promptwright
+pip install git+https://github.com/ParsBench/persian-promptwright.git
 ```
 
 #### Development Installation
